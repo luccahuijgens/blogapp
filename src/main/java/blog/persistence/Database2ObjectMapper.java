@@ -42,7 +42,8 @@ public class Database2ObjectMapper {
 		String password=rs.getString("password");
 		String role=rs.getString("role");
 		Date registration=rs.getDate("registrationdate");
-		return new User(id,username,password,role,registration);
+		String description=rs.getString("description");
+		return new User(id,username,password,role,registration,description);
 	}catch(SQLException e) {
 		e.printStackTrace();
 		return null;
