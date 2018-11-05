@@ -2,24 +2,31 @@ package blog.domain;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale.Category;
 
 public class BlogPage {
 private int id;
 private String title;
 private User author;
-private Date pbulicationdate;
+private Date publicationdate;
 private Date editeddate;
 private ArrayList<BlogCategory>categories;
 private String content;
 
-public BlogPage(int id, String title, User author, Date pbulicationdate, Date editeddate,
+public BlogPage(int id, String title, Date publicationdate, Date editeddate,String content) {
+	super();
+	this.id = id;
+	this.title = title;
+	this.publicationdate = publicationdate;
+	this.editeddate = editeddate;
+	this.content = content;
+}
+public BlogPage(int id, String title, User author, Date publicationdate, Date editeddate,
 		ArrayList<BlogCategory> categories, String content) {
 	super();
 	this.id = id;
 	this.title = title;
 	this.author = author;
-	this.pbulicationdate = pbulicationdate;
+	this.publicationdate = publicationdate;
 	this.editeddate = editeddate;
 	this.categories = categories;
 	this.content = content;
@@ -49,12 +56,12 @@ public void setAuthor(User author) {
 	this.author = author;
 }
 
-public Date getPbulicationdate() {
-	return pbulicationdate;
+public Date getPublicationdate() {
+	return publicationdate;
 }
 
-public void setPbulicationdate(Date pbulicationdate) {
-	this.pbulicationdate = pbulicationdate;
+public void setPublicationdate(Date pbulicationdate) {
+	this.publicationdate = pbulicationdate;
 }
 
 public Date getEditeddate() {

@@ -1,22 +1,21 @@
 package blog.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import blog.persistence.BlogDAO;
-import blog.persistence.UserDAO;
 
 public class BlogService {
 private BlogDAO blogDAO;
-private UserDAO userDAO;
 
 public BlogService() {
 	super();
 	this.blogDAO = new BlogDAO();
-	this.userDAO = new UserDAO();
 }
 
 public ArrayList<BlogPage> getAllBlogs() {
-	return blogDAO.getAllBlogs();
+	return sort(blogDAO.getAllBlogs());
 }
 public BlogPage getBlogById(int id) {
 	for (BlogPage blog:blogDAO.getAllBlogs()) {
@@ -26,17 +25,43 @@ public BlogPage getBlogById(int id) {
 	}
 	return null;
 }
-public ArrayList<BlogPage>getBlogsByCategory(String category) {
-	return blogDAO.getBlogsByCategory(category);
+public ArrayList<BlogPage>getBlogsByCategory(int category) {
+	return sort(blogDAO.getBlogsByCategory(category));
 }
-public boolean createBlog(User user, String content) {
-	return blogDAO.createBlog(user,content);
+public ArrayList<BlogCategory> getCategories(){
+	return blogDAO.getAllCategories();
+}
+public BlogCategory getCategoryByID(int id){
+	return blogDAO.getCategoryByID(id);
+}
+public ArrayList<BlogCategory> getCategoriesByBlog(int id){
+	return blogDAO.getCategoriesByBlog(id);
+}
+public boolean createBlog(User user, String title, ArrayList<Integer>categoryids,String content) {
+	ArrayList<BlogCategory>categories=new ArrayList<BlogCategory>();
+	for (int i:categoryids) {
+		categories.add(blogDAO.getCategoryByID(i));
+	}
+	return blogDAO.createBlog(user,title, categories, content);
 }
 
-public boolean editBlog(int id, BlogPage editedBlog) {
-	return blogDAO.editBlog(id,editedBlog);
+public boolean editBlog(BlogPage editedBlog,ArrayList<Integer>categoryids) {
+	ArrayList<BlogCategory>categories=new ArrayList<BlogCategory>();
+	for (int i:categoryids) {
+		categories.add(blogDAO.getCategoryByID(i));
+	}
+	return blogDAO.editBlog(editedBlog,categories);
 }
 public boolean deleteBlog(int id) {
 	return blogDAO.deleteBlog(id);
+}
+private ArrayList<BlogPage> sort(ArrayList<BlogPage>list){
+	Collections.sort(list, new Comparator<BlogPage>() {
+    public int compare(BlogPage o1, BlogPage o2) {
+        return o1.getPublicationdate().compareTo(o2.getPublicationdate());
+    }
+});
+	Collections.reverse(list);
+    return list;
 }
 }
