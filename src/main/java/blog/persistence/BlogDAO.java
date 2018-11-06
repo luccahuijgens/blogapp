@@ -38,7 +38,7 @@ private UserDAO userDAO=new UserDAO();
 			ArrayList<BlogPage>results=new ArrayList<BlogPage>();
 			BlogPage blog=null;
 			try (Connection connection = super.getConnection()) {
-	            PreparedStatement preparedStatement = connection.prepareStatement("SELECT* FROM BLOGPAGES WHERE ID in (SELECT * FROM BLOG_CATEGORIES WHERE NAME=?)");
+	            PreparedStatement preparedStatement = connection.prepareStatement("SELECT* FROM BLOGPAGES WHERE ID in (SELECT BLOG_ID FROM BLOG_CATEGORY WHERE CATEGORY_ID=?)");
 	            preparedStatement.setInt(1, id);
 	            ResultSet rs=preparedStatement.executeQuery();
 	            
@@ -123,21 +123,23 @@ public ArrayList<BlogCategory> getCategoriesByBlog(int id){
 	    }return results;
 		}
 	
-	public boolean createBlog(User user,String title,ArrayList<BlogCategory>categories,String content) {
+	public int createBlog(User user,String title,String header,ArrayList<BlogCategory>categories,String content) {
 		int blogid=0;
 		int userid=user.getId();
 		Date pubdate=new Date();
 		try (Connection connection = super.getConnection()){
-			PreparedStatement preparedStatement=connection.prepareStatement("SELECT MAX(ID) FROM BLOGPAGES");
+			PreparedStatement preparedStatement=connection.prepareStatement("SELECT MAX(ID) as max_id FROM BLOGPAGES");
 			ResultSet rs=preparedStatement.executeQuery();
-			blogid=rs.getInt(1);
-			
-			preparedStatement= connection.prepareStatement("INSERT INTO BLOGPAGES(id,title,author,publicationdate,editeddate,content) VALUES(?,?,?,?,null,?)");
+			if(rs.next()) {
+			blogid=rs.getInt("max_id");
+			}
+			preparedStatement= connection.prepareStatement("INSERT INTO BLOGPAGES(id,title,header,author,publicationdate,editeddate,content) VALUES(?,?,?,?,?,null,?)");
 			preparedStatement.setInt(1, blogid);
 			preparedStatement.setString(2, title);
-			preparedStatement.setInt(3, userid);
-			preparedStatement.setDate(4, new java.sql.Date(pubdate.getTime()));
-			preparedStatement.setString(5,content);
+			preparedStatement.setString(3, header);
+			preparedStatement.setInt(4, userid);
+			preparedStatement.setDate(5, new java.sql.Date(pubdate.getTime()));
+			preparedStatement.setString(6,content);
 			preparedStatement.executeUpdate();
 			
 			for (BlogCategory cat:categories) {	
@@ -145,20 +147,21 @@ public ArrayList<BlogCategory> getCategoriesByBlog(int id){
 			preparedStatement.setInt(1, blogid);
 			preparedStatement.setInt(2, cat.getId());
 			preparedStatement.executeUpdate();
-			}return true;
+			}return blogid;
 		}catch(SQLException e) {
 			e.printStackTrace();
-			return false;
+			return 0;
 		}
 		
 	}
 	
 	public boolean editBlog(BlogPage blog, ArrayList<BlogCategory>categories) {
 			try (Connection connection = super.getConnection()){
-				PreparedStatement preparedStatement= connection.prepareStatement("INSERT INTO BLOGPAGES(title,editeddate,content) VALUES(?,?,?)");
+				PreparedStatement preparedStatement= connection.prepareStatement("INSERT INTO BLOGPAGES(title,header,editeddate,content) VALUES(?,?,?,?)");
 				preparedStatement.setString(1, blog.getTitle());
-				preparedStatement.setDate(2, new java.sql.Date(new Date().getTime()));
-				preparedStatement.setString(3, blog.getContent());
+				preparedStatement.setString(2, blog.getHeader());
+				preparedStatement.setDate(3, new java.sql.Date(new Date().getTime()));
+				preparedStatement.setString(4, blog.getContent());
 				preparedStatement.executeUpdate();
 				
 				for (BlogCategory cat:categories) {	

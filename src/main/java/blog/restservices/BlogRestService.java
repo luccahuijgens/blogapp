@@ -3,6 +3,8 @@ package blog.restservices;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -28,30 +30,48 @@ import blog.domain.UserService;
 public class BlogRestService {
 private BlogService service=ServiceProvider.getService();
 private UserService userservice=ServiceProvider.getUserService();
+private Random randomGenerator=new Random();
 
 @GET
 @Produces("application/json")
-public String getAllBlogs() {
+public String getAllBlogs(@QueryParam("amount") int amount) {
 	JsonArrayBuilder jab=Json.createArrayBuilder();
+	if (amount != 0) {
+		for(BlogPage blog: getRandomBlogs(amount)) {
+			jab.add(createJson(blog));
+		}
+	}else {
 	for(BlogPage blog: service.getAllBlogs()) {
 		jab.add(createJson(blog));
-	}
+	}}
 	return jab.build().toString();
 }
+
 
 @GET
 @Path("/{id}")
 @Produces("application/json")
 public String getBlogByID(@PathParam("id") int id) {
-	BlogPage blog=service.getBlogById(id);
-	return createJson(blog).build().toString();
+	JsonObjectBuilder job=createJson(service.getBlogById(id));
+	return job.build().toString();
+}
+
+@GET
+@Path("category/{id}")
+@Produces("application/json")
+public String getBlogByCategory(@PathParam("id") int id) {
+	JsonArrayBuilder jab=Json.createArrayBuilder();
+	for(BlogPage blog: service.getBlogsByCategory(id)) {
+		jab.add(createJson(blog));
+	}
+	return jab.build().toString();
 }
 
 @PUT
 public Response createBlog(BlogPageDTO blog) {
 	try {
 	User author=userservice.getUserById(blog.getAuthor());
-	service.createBlog(author, blog.getTitle(), blog.getCategories(), blog.getContent());
+	service.createBlog(author, blog.getTitle(),blog.getHeader(), blog.getCategories(), blog.getContent());
 	return Response.status(200).build();
 	}catch(Exception e) {
 		e.printStackTrace();
@@ -61,7 +81,7 @@ public Response createBlog(BlogPageDTO blog) {
 
 @POST
 @Path("/{id}")
-public Response updateBlog(@PathParam("id") int id,@QueryParam("title") String title,@QueryParam("content") String content,@QueryParam("categories") String categories) {
+public Response updateBlog(@PathParam("id") int id,@QueryParam("title") String title,@QueryParam("header") String header,@QueryParam("content") String content,@QueryParam("categories") String categories) {
 	ArrayList<Integer>categorylist=new ArrayList<Integer>();
 	BlogPage blog=service.getBlogById(id);
 	blog.setTitle(title);
@@ -80,6 +100,33 @@ public Response updateBlog(@PathParam("id") int id,@QueryParam("title") String t
 	return Response.status(200).build();
 }
 
+private ArrayList<BlogPage> getRandomBlogs(int amount) {
+	ArrayList<BlogPage>list=service.getAllBlogs();
+	ArrayList<BlogPage>result=new ArrayList<BlogPage>();
+	ArrayList<Integer>used=new ArrayList<Integer>();
+	int counter=0;
+	int index=0;
+		while(amount>counter) {
+			index=randomGenerator.nextInt(list.size());
+			while(containsCheck(used,index)==true) {
+				index=randomGenerator.nextInt(list.size());
+			}
+			System.out.println(index);
+			result.add(list.get(index));
+			used.add(index);
+			counter++;
+		}
+	return result;
+}
+
+private boolean containsCheck(ArrayList<Integer>list,int target) {
+	for (int i: list) {
+		if (i==target) {
+			return true;
+		}
+	}return false;
+}
+
 private JsonObjectBuilder createJson(BlogPage blog) {
 	SimpleDateFormat format=new SimpleDateFormat("d MMMM, yyyy");
 	JsonObjectBuilder job=Json.createObjectBuilder();
@@ -93,17 +140,24 @@ private JsonObjectBuilder createJson(BlogPage blog) {
 	}
 	try {
 	job.add("id", blog.getId());
-	job.add("title", blog.getTitle());
+	job.add("title", nullCheck(blog.getTitle()));
+	job.add("header", nullCheck(blog.getHeader()));
 	user.add("id", blog.getAuthor().getId());
 	user.add("name", blog.getAuthor().getUsername());
 	job.add("author", user);
 	job.add("publicationdate", format.format(blog.getPublicationdate()));
 	job.add("editeddate", format.format(blog.getEditeddate()));
 	job.add("categories", categories);
-	job.add("content", blog.getContent());
+	job.add("content", nullCheck(blog.getContent()));
 }catch(Exception e) {
 	e.printStackTrace();
 	return null;
 }return job;
+}
+
+private String nullCheck(String s) {
+	if (s==null){
+		return "";
+	}return s;
 }
 }

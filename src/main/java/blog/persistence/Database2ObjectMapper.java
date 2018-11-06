@@ -14,10 +14,11 @@ public class Database2ObjectMapper {
 		try {
 		int id = rs.getInt("id");
 		String title = rs.getString("title");
+		String header=rs.getString("header");
 		Date publicationdate = rs.getDate("publicationdate");
 		Date editeddate = rs.getDate("editeddate");
 		String content = rs.getString("content");
-		return new BlogPage(id,title,publicationdate,editeddate,content);
+		return new BlogPage(id,title,header,publicationdate,editeddate,content);
 	}catch(SQLException e) {
 		e.printStackTrace();
 		return null;

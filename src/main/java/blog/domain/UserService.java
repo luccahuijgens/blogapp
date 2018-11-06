@@ -15,6 +15,16 @@ public class UserService {
 		return userDAO.getUsers();
 	}
 	
+	public ArrayList<User>getUsersByRole(String role) {
+		ArrayList<User>results=new ArrayList<User>();
+		for (User u:userDAO.getUsers()) {
+			if (u.getRole().equals(role)) {
+				results.add(u);
+			}
+		}
+		return results;
+	}
+	
 	public User getUserById(int id) {
 		return userDAO.getUserByID(id);
 	}

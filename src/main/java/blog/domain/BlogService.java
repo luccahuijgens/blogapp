@@ -1,8 +1,12 @@
 package blog.domain;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import org.apache.commons.io.FileUtils;
 
 import blog.persistence.BlogDAO;
 
@@ -37,12 +41,30 @@ public BlogCategory getCategoryByID(int id){
 public ArrayList<BlogCategory> getCategoriesByBlog(int id){
 	return blogDAO.getCategoriesByBlog(id);
 }
-public boolean createBlog(User user, String title, ArrayList<Integer>categoryids,String content) {
+
+public boolean createBlog(User user, String title, String header,ArrayList<Integer>categoryids,String content) {
+	try {
 	ArrayList<BlogCategory>categories=new ArrayList<BlogCategory>();
 	for (int i:categoryids) {
 		categories.add(blogDAO.getCategoryByID(i));
 	}
-	return blogDAO.createBlog(user,title, categories, content);
+	int blogid=blogDAO.createBlog(user,title,header, categories, content);
+	if (blogid!=0) {
+		ClassLoader classLoader = getClass().getClassLoader();
+		File htmlTemplateFile = new File(classLoader.getResource("posttemplate.html").getFile());
+	String htmlString = FileUtils.readFileToString(htmlTemplateFile, Charset.forName("UTF-8"));
+	htmlString = htmlString.replace("$title", title);
+	htmlString = htmlString.replace("$id", String.valueOf(blogid));
+	File newHtmlFile = new File("WebContent/posts/"+blogid+".html");
+	if(!newHtmlFile.exists()) {
+	if (newHtmlFile.createNewFile()) {
+	FileUtils.writeStringToFile(newHtmlFile, htmlString,Charset.forName("UTF-8"));
+	return true;
+	}}}return false;
+	}catch(/*IO*/Exception e){
+		e.printStackTrace();
+		return false;
+	}
 }
 
 public boolean editBlog(BlogPage editedBlog,ArrayList<Integer>categoryids) {
