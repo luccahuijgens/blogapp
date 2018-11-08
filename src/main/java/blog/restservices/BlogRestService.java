@@ -37,6 +37,23 @@ private Random randomGenerator=new Random();
 public String getAllBlogs(@QueryParam("amount") int amount) {
 	JsonArrayBuilder jab=Json.createArrayBuilder();
 	if (amount != 0) {
+		 ArrayList<BlogPage> al = new ArrayList<BlogPage>(service.getAllBlogs().subList(0, amount));
+		 for (BlogPage blog: al) {
+			 jab.add(createJson(blog));
+		 }
+	}else {
+	for(BlogPage blog: service.getAllBlogs()) {
+		jab.add(createJson(blog));
+	}}
+	return jab.build().toString();
+}
+
+@Path("random")
+@GET
+@Produces("application/json")
+public String pages(@QueryParam("amount") int amount) {
+	JsonArrayBuilder jab=Json.createArrayBuilder();
+	if (amount != 0) {
 		for(BlogPage blog: getRandomBlogs(amount)) {
 			jab.add(createJson(blog));
 		}
