@@ -3,7 +3,6 @@ package blog.restservices;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 import javax.json.Json;
@@ -76,11 +75,17 @@ public String getBlogByID(@PathParam("id") int id) {
 @GET
 @Path("category/{id}")
 @Produces("application/json")
-public String getBlogByCategory(@PathParam("id") int id) {
+public String getBlogByCategory(@PathParam("id") int id, @QueryParam("amount") int amount) {
 	JsonArrayBuilder jab=Json.createArrayBuilder();
+	if (amount != 0 && amount<=service.getBlogsByCategory(id).size()) {
+		ArrayList<BlogPage> al = new ArrayList<BlogPage>(service.getBlogsByCategory(id).subList(0, amount));
+		 for (BlogPage blog: al) {
+			 jab.add(createJson(blog));
+		 }
+	}else {
 	for(BlogPage blog: service.getBlogsByCategory(id)) {
 		jab.add(createJson(blog));
-	}
+	}}
 	return jab.build().toString();
 }
 
