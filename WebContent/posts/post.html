@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/blog/styles/post.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="/blog/scripts/jquery-3.3.1.min.js"></script>
+
+<body style=background-image:url(http://www.fullhdwpp.com/wp-content/uploads/City-Bridge_fullhdwpp.com_.jpg);background-repeat:no-repeat;background-attachment:fixed;>
+
+<div class="w3-content" style="max-width:1400px;background-color:white;width:85%;">
+
+<!-- Header -->
+<header id=header class="w3-container w3-center w3-padding-32" style=color:white;background-image:url(/blog/imgs/banner.png);> 
+</header>
+
+<div id=navbar>
+<ul>
+  <li><a class="active" href="index.html">Home</a></li>
+  <li><a href="#news">New Post</a></li>
+  <li><a href="#contact">Manage Posts</a></li>
+  <li style=float:right;><a href="#about">Sign Out</a></li>
+</ul>
+</div>
+
+<!-- Grid -->
+<div class="w3-row">
+
+<!-- Blog entries -->
+<div class="w3-col l8 s12">
+  <!-- Blog entry -->
+  <div class="w3-margin w3-white">
+  <div id=postbanner>
+    </div>
+    <div id=posthead class="w3-container">
+    </div>
+
+    <div id=postcontent class="w3-container">
+    </div>
+  </div>
+  <hr>
+
+  
+<!-- END BLOG ENTRIES -->
+</div>
+
+<!-- Introduction menu -->
+<div class="w3-col l4">
+  <!-- About Card -->
+  <div class="w3-margin w3-margin-top">
+  <h4>Author</h4>
+  <hr>
+  <div id=masterauthorimage></div>
+    <div id=masterauthor class="w3-container w3-white">
+    </div>
+  </div><hr>
+  
+  <!-- Posts -->
+  <div class="w3-margin">
+    <div class="w3-container w3-padding">
+      <h4>Popular Posts</h4>
+    </div><hr>
+    <ul id=latestposts class="w3-ul w3-hoverable w3-white">
+    </ul>
+  </div>
+  <hr> 
+ 
+  <!-- Labels / tags -->
+    <div class="w3-container">
+      <h4>Categories</h4>
+    </div><hr>
+    <div id=categorylist class="w3-container w3-white">
+    <ul id=categorylinklist>
+    </ul>
+    </div>
+  
+<!-- END Introduction Menu -->
+</div>
+
+<!-- END GRID -->
+</div><br>
+
+<!-- Footer -->
+<footer class="w3-container w3-dark-grey w3-padding-16 w3-margin-top">
+  <button class="w3-button w3-black w3-disabled w3-padding-large w3-margin-bottom">Previous</button>
+  <button class="w3-button w3-black w3-padding-large w3-margin-bottom">Next »</button>
+  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+</footer>
+<!-- END w3-content -->
+</div>
+
+</body>
+<script src="/blog/scripts/post.js"></script>
+<script>
+loadPost(1);
+loadCategories();
+loadMaster();
+loadLatest();
+</script>
+</html>
